@@ -1,12 +1,14 @@
 import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
 
-public class EmployeeTest {
+public class ApiJavaAutomationTest {
     final static String url = "http://dummy.restapiexample.com";
 
     /*
         Hallo ini adalah initial state terkait java rest assured kita.
         Coba run class ini, dan pastikan program berjalan dan menghasilkan
-        output "The response status is 200"
+        output "The response status is 200".
+        Segera kontak tim Atlas jika menemui kendala!
 
         Nantikan berbagai latihan dan problem set di kelas nanti!
      */
