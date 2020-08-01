@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+group 'atlas_id'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'io.rest-assured:rest-assured:4.3.1'
+    implementation 'io.rest-assured:json-schema-validator:4.3.1'
+    testImplementation 'io.rest-assured:json-schema-validator:4.3.1'
+}
