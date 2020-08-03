@@ -1,3 +1,7 @@
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import org.junit.Assert;
+import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
@@ -13,18 +17,13 @@ public class ApiJavaAutomationTest {
         Nantikan berbagai latihan dan problem set di kelas nanti!
      */
 
-    public static void main(String args[]){
-        checkConnection();
-    }
+    @Test
+    public void percobaanPertama(){
+        Response response = given().baseUri(url).basePath("/api/v1").contentType(ContentType.JSON)
+                .get("/employees");
 
-    public static void checkConnection(){
-        int statusCode =
-                given()
-                        .baseUri(url)
-                        .basePath("/api/v1")
-                .when()
-                        .get("/employees")
-                        .getStatusCode();
-        System.out.println("The response status is "+statusCode);
+        int statusCode = response.getStatusCode();
+        Assert.assertEquals(statusCode, 200);
+        System.out.println("The response status is " +statusCode);
     }
 }
