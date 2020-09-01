@@ -1,5 +1,6 @@
 import static io.restassured.RestAssured.given;
 
+import com.github.javafaker.Faker;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.Assert;
@@ -7,117 +8,123 @@ import org.junit.jupiter.api.Test;
 
 public class ApiJavaAutomationTest {
 
-    public final static String URL = "https://reqres.in/";
+  public final static String URL = "http://localhost:8080";
 
-    @Test
-    public void getListUsers() {
-        Response response = given().log().all().baseUri(URL).basePath("/api")
-            .contentType(ContentType.JSON).accept(ContentType.JSON)
-            .queryParam("page", 2)
-            .get("/users");
+  //  faker untuk generate random data
+  public Faker faker = new Faker();
 
-        response.getBody().prettyPrint();
+  public String generateRandomName() {
+    return faker.name().fullName();
+  }
 
-        int statusCode = response.getStatusCode();
-        Assert.assertEquals(statusCode, 200);
-        Assert.assertEquals(response.path("page"), new Integer(2));
-        System.out.println("The response status is " + statusCode);
-    }
+  public String generateRandomPassportNumber() {
+    return faker.numerify("#########");
+  }
 
+  @Test
+  public void getListStudents() {
+    Response response = given().log().all().baseUri(URL)
+        .contentType(ContentType.JSON).accept(ContentType.JSON)
+        .queryParam("page", 2)
+        .get("/students");
 
-    @Test
-    public void getSingleUser() {
-        Response response = given().log().all().baseUri(URL).basePath("/api")
-            .contentType(ContentType.JSON).accept(ContentType.JSON)
-            .pathParam("userId", 2)
-            .get("/users/{userId}");
+    response.getBody().prettyPrint();
 
-        response.getBody().prettyPrint();
-
-        int statusCode = response.getStatusCode();
-        Assert.assertEquals(statusCode, 200);
-        System.out.println("The response status is " + statusCode);
-    }
+    int statusCode = response.getStatusCode();
+    Assert.assertEquals(200, statusCode);
+    System.out.println("The response status is " + statusCode);
+  }
 
 
-    @Test
-    public void createUser() {
+  @Test
+  public void getSingleStudent() {
+    Response responseGetAll = given().log().all().baseUri(URL)
+        .contentType(ContentType.JSON).accept(ContentType.JSON)
+        .queryParam("page", 2)
+        .get("/students");
 
-        String requestBody = "{\n"
-            + "    \"name\": \"Tri Abror\",\n"
-            + "    \"job\": \"SEIT\"\n"
-            + "}";
+    responseGetAll.getBody().prettyPrint();
 
-        Response response = given().log().all().baseUri(URL).basePath("/api")
-            .contentType(ContentType.JSON).accept(ContentType.JSON)
-            .body(requestBody)
-            .post("/users");
+    Response responseGetSingle = given().log().all().baseUri(URL)
+        .contentType(ContentType.JSON).accept(ContentType.JSON)
+        .pathParam("id", responseGetAll.path("id[0]"))
+        .get("/students/{id}");
 
-        response.getBody().prettyPrint();
+    responseGetSingle.getBody().prettyPrint();
 
-        int statusCode = response.getStatusCode();
-        Assert.assertEquals(statusCode, 201);
-        System.out.println("The response status is " + statusCode);
-    }
-
-
-    @Test
-    public void updateUser() {
-
-        String requestBodyAdd = "{\n"
-            + "    \"name\": \"Tri Abror\",\n"
-            + "    \"job\": \"SEIT\"\n"
-            + "}";
-
-        String requestBodyUpdate = "{\n"
-            + "    \"name\": \"Hendri\",\n"
-            + "    \"job\": \"SEIT\"\n"
-            + "}";
-
-        Response responseAdd = given().log().all().baseUri(URL).basePath("/api")
-            .contentType(ContentType.JSON).accept(ContentType.JSON)
-            .body(requestBodyAdd)
-            .post("/users");
-
-        responseAdd.getBody().prettyPrint();
-
-        Response responseUpdate = given().log().all().baseUri(URL).basePath("/api")
-            .contentType(ContentType.JSON).accept(ContentType.JSON)
-            .body(requestBodyUpdate)
-            .pathParam("userId", responseAdd.path("id"))
-            .put("/users/{userId}");
-
-        responseUpdate.getBody().prettyPrint();
-
-        int statusCode = responseUpdate.getStatusCode();
-        Assert.assertEquals(statusCode, 200);
-        System.out.println("The responseAdd status is " + statusCode);
-    }
+    int statusCode = responseGetSingle.getStatusCode();
+    Assert.assertEquals(200, statusCode);
+    System.out.println("The response status is " + statusCode);
+  }
 
 
-    @Test
-    public void deleteeUser() {
+  @Test
+  public void addStudent() {
 
-        String requestBody = "{\n"
-            + "    \"name\": \"Tri Abror\",\n"
-            + "    \"job\": \"SEIT\"\n"
-            + "}";
+    String requestBody = "{\n"
+        + "    \"name\": \"" + generateRandomName() + "\",\n"
+        + "    \"passportNumber\": \"" + generateRandomPassportNumber() + "\"\n"
+        + "}";
 
-        Response responseAdd = given().log().all().baseUri(URL).basePath("/api")
-            .contentType(ContentType.JSON).accept(ContentType.JSON)
-            .body(requestBody)
-            .post("/users");
+    Response response = given().log().all().baseUri(URL)
+        .contentType(ContentType.JSON).accept(ContentType.JSON)
+        .body(requestBody)
+        .post("/students");
 
-        responseAdd.getBody().prettyPrint();
+    response.getBody().prettyPrint();
 
-        Response responseDelete = given().log().all().baseUri(URL).basePath("/api")
-            .contentType(ContentType.JSON).accept(ContentType.JSON)
-            .pathParam("userId", responseAdd.path("id"))
-            .delete("/users/{userId}");
+    int statusCode = response.getStatusCode();
+    Assert.assertEquals(201, statusCode);
+    System.out.println("The response status is " + statusCode);
+  }
 
-        int statusCode = responseDelete.getStatusCode();
-        Assert.assertEquals(statusCode, 204);
-        System.out.println("The response status is " + statusCode);
-    }
+
+  @Test
+  public void updateStudent() {
+    Response responseGetAll = given().log().all().baseUri(URL)
+        .contentType(ContentType.JSON).accept(ContentType.JSON)
+        .queryParam("page", 2)
+        .get("/students");
+
+    responseGetAll.getBody().prettyPrint();
+
+    String requestBody = "{\n"
+        + "    \"name\": \"" + generateRandomName() + "\",\n"
+        + "    \"passportNumber\": \"" + generateRandomPassportNumber() + "\"\n"
+        + "}";
+
+    Response responseUpdate = given().log().all().baseUri(URL)
+        .contentType(ContentType.JSON).accept(ContentType.JSON)
+        .body(requestBody)
+        .pathParam("id", responseGetAll.path("id[0]"))
+        .put("/students/{id}");
+
+    responseUpdate.getBody().prettyPrint();
+
+    int statusCode = responseUpdate.getStatusCode();
+    Assert.assertEquals(204, statusCode);
+    System.out.println("The responseAdd status is " + statusCode);
+  }
+
+
+  @Test
+  public void deleteStudent() {
+
+    Response responseGet = given().log().all().baseUri(URL)
+        .contentType(ContentType.JSON).accept(ContentType.JSON)
+        .queryParam("page", 2)
+        .get("/students");
+
+    responseGet.getBody().prettyPrint();
+
+    Response responseDelete = given().log().all().baseUri(URL)
+        .contentType(ContentType.JSON).accept(ContentType.JSON)
+        .pathParam("id", responseGet.path("id[0]"))
+        .delete("/students/{id}");
+
+    int statusCode = responseDelete.getStatusCode();
+    Assert.assertEquals(200, statusCode);
+    System.out.println("The response status is " + statusCode);
+  }
 
 }
