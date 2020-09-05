@@ -74,7 +74,7 @@ public class ApiJavaAutomationTest {
     response.getBody().prettyPrint();
 
     int statusCode = response.getStatusCode();
-    Assert.assertEquals(201, statusCode);
+    Assert.assertEquals(200, statusCode);
     System.out.println("The response status is " + statusCode);
   }
 
@@ -102,7 +102,7 @@ public class ApiJavaAutomationTest {
     responseUpdate.getBody().prettyPrint();
 
     int statusCode = responseUpdate.getStatusCode();
-    Assert.assertEquals(204, statusCode);
+    Assert.assertEquals(200, statusCode);
     System.out.println("The responseAdd status is " + statusCode);
   }
 
