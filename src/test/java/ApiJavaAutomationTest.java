@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 public class ApiJavaAutomationTest {
 
+  String test = "THIS IS THE LATEST VERSION";
+
   public final static String URL = "http://localhost:8080";
 
   //  faker untuk generate random data
